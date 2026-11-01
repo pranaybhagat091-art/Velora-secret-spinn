@@ -51,7 +51,7 @@ function joinExisting(){const name=$("name").value.trim()||"Player";const code=$
 $("join").onclick=joinExisting;
 $("create").onclick=()=>{const name=$("name").value.trim()||"Host";if(!$("password").value)return status("Set an admin password before creating a room.");socket.emit("createRoom",{name,password:$("password").value},res=>{if(res?.error)return status(res.error);showGame(res.code,true);history.replaceState(null,"",location.pathname+"?room="+res.code)})};
 $("spin").onclick=()=>{ $("bottle").classList.remove("spinning");void $("bottle").offsetWidth;$("bottle").classList.add("spinning");socket.emit("spin",res=>{if(res?.error)status(res.error);else status("")})};
-$("saveQuestions").onclick=()=>{const questions=$("questions").value.split("\\n").map(x=>x.trim()).filter(Boolean);socket.emit("setQuestions",{questions},res=>$("adminStatus").textContent=res?.error||`${res.count} questions saved privately.`)};
+$("saveQuestions").onclick=()=>{const questions=$("questions").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);;socket.emit("setQuestions",{questions},res=>$("adminStatus").textContent=res?.error||`${res.count} questions saved privately.`)};
 $("clearChat").onclick=()=>socket.emit("clearChat",{},res=>$("adminStatus").textContent=res?.error||"Chat cleared.");
 $("chatForm").onsubmit=e=>{e.preventDefault();const message=$("message").value.trim();if(!message)return;socket.emit("chat",{message},res=>{if(res?.error)status(res.error)});$("message").value=""};
 $("copy").onclick=async()=>{const url=location.origin+location.pathname+"?room="+roomCode;try{await navigator.clipboard.writeText(url);status("Invite link copied! Share it with your group.")}catch{status("Copy this invite link: "+url)}};
